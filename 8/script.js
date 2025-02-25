@@ -37,7 +37,7 @@ createWall(5, 0.1, 5, [0, 0, 0], whiteMaterial); // Floor
 createWall(5, 0.1, 5, [0, 5, 0], whiteMaterial); // Ceiling
 scene.add(walls);
 
-// Table (Top Surface)
+// Table
 const tabletop = new THREE.Mesh(
     new THREE.BoxGeometry(3, 0.2, 2), // Width, thickness, depth
     new THREE.MeshStandardMaterial({ color: 0x8B4513 }) // Brown color
@@ -83,7 +83,7 @@ const sphere = new THREE.Mesh(
 sphere.position.set(0, 1.4, 0.5);
 scene.add(sphere);
 
-// 💡 Light Sources
+// Light Sources
 const lights = {
     directional: new THREE.DirectionalLight(0xffffff, 1),
     point: new THREE.PointLight(0xffffff, 1, 10),
