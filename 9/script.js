@@ -1,24 +1,24 @@
-// 🎬 Scene, Camera, Renderer
+// Scene, Camera, Renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// 🎮 Orbit Controls
+// Orbit Controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-// 🌎 Ambient Light (always present)
+// Ambient Light (always present)
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-// 🎨 Materials
+// Materials
 const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 }); // Left wall
 const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 }); // Right wall
 const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff }); // Other walls
 
-// 🏠 Cornell Box Walls (GUI Controlled)
+// Cornell Box Walls (GUI Controlled)
 const walls = new THREE.Group();
 const wallMaterials = [redMaterial, greenMaterial, whiteMaterial, whiteMaterial, whiteMaterial];
 
@@ -29,7 +29,7 @@ const createWall = (width, height, depth, position, material) => {
     walls.add(wall);
 };
 
-// 📦 Create Cornell Box
+// Create Cornell Box
 createWall(5, 5, 0.1, [0, 2.5, -2.5], whiteMaterial); // Back wall
 createWall(0.1, 5, 5, [-2.5, 2.5, 0], redMaterial); // Left wall
 createWall(0.1, 5, 5, [2.5, 2.5, 0], greenMaterial); // Right wall
@@ -41,7 +41,7 @@ scene.add(walls);
 
 
 
-// 🏠 Table (Top Surface)
+// Table (Top Surface)
 const tabletop = new THREE.Mesh(
     new THREE.BoxGeometry(3, 0.2, 2), // Width, thickness, depth
     new THREE.MeshStandardMaterial({ color: 0x8B4513 }) // Brown wood color
