@@ -9,7 +9,7 @@ document.body.appendChild(renderer.domElement);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-// Ambient Light (always present)
+// Ambient Light
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
@@ -37,57 +37,77 @@ createWall(5, 0.1, 5, [0, 0, 0], whiteMaterial); // Floor
 createWall(5, 0.1, 5, [0, 5, 0], whiteMaterial); // Ceiling
 scene.add(walls);
 
+// Rectangular Area Lights for Each Wall
+const rectLightBack = new THREE.RectAreaLight(0xffffff, 2, 5, 5); // Back wall light
+rectLightBack.position.set(0, 2.5, -2.49);
+rectLightBack.lookAt(0, 2.5, 0);
 
+const rectLightLeft = new THREE.RectAreaLight(0xff0000, 2, 5, 5); // Left wall light
+rectLightLeft.position.set(-2.49, 2.5, 0);
+rectLightLeft.lookAt(0, 2.5, 0);
 
+const rectLightRight = new THREE.RectAreaLight(0x00ff00, 2, 5, 5); // Right wall light
+rectLightRight.position.set(2.49, 2.5, 0);
+rectLightRight.lookAt(0, 2.5, 0);
 
+const rectLightFloor = new THREE.RectAreaLight(0xffffff, 1.5, 5, 5); // Floor light
+rectLightFloor.position.set(0, 0.01, 0);
+rectLightFloor.rotation.x = -Math.PI / 2;
+
+const rectLightCeiling = new THREE.RectAreaLight(0xffffff, 1.5, 5, 5); // Ceiling light
+rectLightCeiling.position.set(0, 4.99, 0);
+rectLightCeiling.rotation.x = Math.PI / 2;
+
+// Add Lights to Scene
+scene.add(rectLightBack, rectLightLeft, rectLightRight, rectLightFloor, rectLightCeiling);
 
 // Table (Top Surface)
 const tabletop = new THREE.Mesh(
     new THREE.BoxGeometry(3, 0.2, 2), // Width, thickness, depth
-    new THREE.MeshStandardMaterial({ color: 0x8B4513 }) // Brown wood color
+    new THREE.MeshStandardMaterial({ color: 0x8B4513 }) // Brown color
 );
 tabletop.position.set(0, 1, 0); // Positioned above the floor
 scene.add(tabletop);
 
-// 🦵 Table Legs (Four separate legs)
+// Table Legs
 const legMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Same material as tabletop
-const legGeometry = new THREE.BoxGeometry(0.2, 1, 0.2); // Thin vertical legs
+const legGeometry = new THREE.BoxGeometry(0.2, 1, 0.2); // Legs
 
 const createLeg = (x, z) => {
     const leg = new THREE.Mesh(legGeometry, legMaterial);
-    leg.position.set(x, 0.5, z); // Placed at corners, slightly above ground
+    leg.position.set(x, 0.5, z);
     scene.add(leg);
 };
 
-// 📌 Adding 4 legs at the corners
+// Adding 4 legs at the corners
 createLeg(-1.3, -0.8);
 createLeg(1.3, -0.8);
 createLeg(-1.3, 0.8);
 createLeg(1.3, 0.8);
 
-// 🔻 Resized and Repositioned Objects on the Table
+// Objects on the Table
 const cone = new THREE.Mesh(
-    new THREE.ConeGeometry(0.3, 0.8, 32), // Smaller cone
+    new THREE.ConeGeometry(0.3, 0.8, 32), // Cone
     new THREE.MeshLambertMaterial({ color: 0x800080 }) // Purple
 );
 cone.position.set(-0.6, 1.5, 0);
 scene.add(cone);
 
 const cylinder = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.25, 0.25, 0.8, 32), // Smaller cylinder
-    new THREE.MeshPhongMaterial({ color: 0x0000ff, shininess: 100 }) // Blue with shininess
+    new THREE.CylinderGeometry(0.25, 0.25, 0.8, 32), // Cylinder
+    new THREE.MeshPhongMaterial({ color: 0x0000ff, shininess: 100 }) // Blue
 );
 cylinder.position.set(0.6, 1.5, 0);
 scene.add(cylinder);
 
 const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.3, 32, 32), // Smaller sphere
-    new THREE.MeshPhysicalMaterial({ color: 0xffd700, roughness: 0.2, clearcoat: 1.0 }) // Gold with clearcoat
+    new THREE.SphereGeometry(0.3, 32, 32), // Sphere
+    new THREE.MeshPhysicalMaterial({ color: 0xffd700, roughness: 0.2, clearcoat: 1.0 }) // Gold
 );
 sphere.position.set(0, 1.4, 0.5);
 scene.add(sphere);
 
-// 💡 Light Sources (From Ceiling)
+// 💡 Light Sources
 const lights = {
     directional: new THREE.DirectionalLight(0xffffff, 1),
     point: new THREE.PointLight(0xffffff, 1, 10),
@@ -95,16 +115,16 @@ const lights = {
     hemisphere: new THREE.HemisphereLight(0xffffff, 0x0000ff, 1)
 };
 
-// 📍 Position Lights from the Ceiling
+// Position Lights from the Ceiling
 for (let key in lights) {
     lights[key].position.set(0, 5, 0);
 }
 
-// 🏷️ Add Only One Light Initially
+
 scene.add(lights.directional);
 let currentLight = lights.directional;
 
-// 🎛 GUI Setup
+// GUI Setup
 const gui = new lil.GUI();
 const lightControls = {
     type: "Directional", // Default light type
@@ -115,14 +135,14 @@ const lightControls = {
     positionZ: 0
 };
 
-// 🔄 Function to Update Active Light
+// Function to Update Active Light
 function updateLight() {
     scene.remove(currentLight); // Remove previous light
     currentLight = lights[lightControls.type.toLowerCase()];
     scene.add(currentLight);
 }
 
-// 🎨 Light GUI Controls
+// Light GUI Controls
 gui.add(lightControls, "type", ["Directional", "Point", "Spot", "Hemisphere"])
     .name("Light Type")
     .onChange(updateLight);
@@ -147,7 +167,7 @@ gui.add(lightControls, "positionZ", -5, 5, 0.1)
     .name("Pos Z")
     .onChange((value) => currentLight.position.z = value);
 
-// 🎨 Wall Color GUI Controls
+// Wall Color GUI Controls
 const wallColors = {
     back: "#ffffff",
     left: "#ff0000",
@@ -156,17 +176,17 @@ const wallColors = {
     ceiling: "#ffffff"
 };
 
-// 🎛 Material Properties Controls (Including Textures)
+// Material Properties Controls (Including Textures)
 const materialControls = {
     // Colors
     coneColor: "#800080",  
     cylinderColor: "#0000ff",  
     sphereColor: "#ffd700",  
     
-    // Texture Maps (Use URLs from Three.js Textures or other hosted textures)
-    coneMap: 'https://threejs.org/examples/textures/crate.gif', // Texture for Cone (URL example)
-    cylinderMap: 'https://threejs.org/examples/textures/crate.gif', // Texture for Cylinder (URL example)
-    sphereMap: 'https://threejs.org/examples/textures/crate.gif', // Texture for Sphere (URL example)
+    // Texture Maps
+    coneMap: 'https://threejs.org/examples/textures/crate.gif', // Texture for Cone
+    cylinderMap: 'https://threejs.org/examples/textures/crate.gif', // Texture for Cylinder
+    sphereMap: 'https://threejs.org/examples/textures/crate.gif', // Texture for Sphere
 
     // Texture Toggles
     useConeMap: true,  // Toggle to apply/remove the cone texture
@@ -189,9 +209,9 @@ const materialControls = {
 //Texture maps
 const textureLoader = new THREE.TextureLoader();
 
-const coneTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');  // Example texture for cone
-const cylinderTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');  // Example texture for cylinder
-const sphereTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');  // Example texture for sphere
+const coneTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');  // for cone
+const cylinderTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');  // for cylinder
+const sphereTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');  // for sphere
 
 const updateWallColors = () => {
     walls.children[0].material.color.set(wallColors.back);
@@ -208,12 +228,12 @@ wallFolder.addColor(wallColors, "right").name("Right Wall").onChange(updateWallC
 wallFolder.addColor(wallColors, "floor").name("Floor").onChange(updateWallColors);
 wallFolder.addColor(wallColors, "ceiling").name("Ceiling").onChange(updateWallColors);
 
-// 🎨 Materials (With Textures)
+// Materials (With Textures)
 const lambertMaterial = new THREE.MeshLambertMaterial({
     color: materialControls.coneColor,
     emissive: materialControls.emissive,
     emissiveIntensity: materialControls.emissiveIntensity,
-    map: coneTexture,       // Apply texture map to Cone
+    map: coneTexture,
     transparent: materialControls.transparent,
     opacity: materialControls.opacity
 });
@@ -223,7 +243,7 @@ const phongMaterial = new THREE.MeshPhongMaterial({
     emissive: materialControls.emissive,
     emissiveIntensity: materialControls.emissiveIntensity,
     shininess: materialControls.shininess,
-    map: cylinderTexture,  // Apply texture map to Cylinder
+    map: cylinderTexture,
     transparent: materialControls.transparent,
     opacity: materialControls.opacity
 });
@@ -236,7 +256,7 @@ const physicalMaterial = new THREE.MeshPhysicalMaterial({
     metalness: materialControls.metalness,
     clearcoat: materialControls.clearcoat,
     clearcoatRoughness: materialControls.clearcoatRoughness,
-    map: sphereTexture,    // Apply texture map to Sphere
+    map: sphereTexture,
     transparent: materialControls.transparent,
     opacity: materialControls.opacity
 });
@@ -245,10 +265,10 @@ cone.material = lambertMaterial;
 cylinder.material = phongMaterial;
 sphere.material = physicalMaterial;
 
-// 🎛 GUI for Material Properties (Including Textures)
+// GUI for Material Properties (Including Textures)
 const materialFolder = gui.addFolder("Material Properties");
 
-// 🎨 Separate Color Controls for Each Object
+// Separate Color Controls for Each Object
 materialFolder.addColor(materialControls, "coneColor").name("Cone Color").onChange(value => {
     lambertMaterial.color.set(value);
 });
@@ -264,7 +284,7 @@ materialFolder.addColor(materialControls, "sphereColor").name("Sphere Color").on
 // Texture Controls (Allowing Texture Loading)
 materialFolder.add(materialControls, "useConeMap").name("Use Cone Texture").onChange(value => {
     lambertMaterial.map = value ? coneTexture : null;
-    lambertMaterial.needsUpdate = true;  // Force material update
+    lambertMaterial.needsUpdate = true;
 });
 
 materialFolder.add(materialControls, "useCylinderMap").name("Use Cylinder Texture").onChange(value => {
@@ -324,10 +344,61 @@ materialFolder.add(materialControls, "clearcoatRoughness", 0, 1, 0.01).name("Cle
     physicalMaterial.clearcoatRoughness = value;
 });
 
-// 🎥 Camera Position
+
+// GUI Controls for RectAreaLights
+const rectLightControls = {
+    backColor: "#ffffff",
+    backIntensity: 2,
+    leftColor: "#ff0000",
+    leftIntensity: 2,
+    rightColor: "#00ff00",
+    rightIntensity: 2,
+    floorColor: "#ffffff",
+    floorIntensity: 1.5,
+    ceilingColor: "#ffffff",
+    ceilingIntensity: 1.5
+};
+
+const updateRectLights = () => {
+    rectLightBack.color.set(rectLightControls.backColor);
+    rectLightBack.intensity = rectLightControls.backIntensity;
+
+    rectLightLeft.color.set(rectLightControls.leftColor);
+    rectLightLeft.intensity = rectLightControls.leftIntensity;
+
+    rectLightRight.color.set(rectLightControls.rightColor);
+    rectLightRight.intensity = rectLightControls.rightIntensity;
+
+    rectLightFloor.color.set(rectLightControls.floorColor);
+    rectLightFloor.intensity = rectLightControls.floorIntensity;
+
+    rectLightCeiling.color.set(rectLightControls.ceilingColor);
+    rectLightCeiling.intensity = rectLightControls.ceilingIntensity;
+};
+
+// Add Controls
+const lightFolder = gui.addFolder("Wall Lights");
+
+lightFolder.addColor(rectLightControls, "backColor").name("Back Wall Light").onChange(updateRectLights);
+lightFolder.add(rectLightControls, "backIntensity", 0, 5, 0.1).name("Back Intensity").onChange(updateRectLights);
+
+lightFolder.addColor(rectLightControls, "leftColor").name("Left Wall Light").onChange(updateRectLights);
+lightFolder.add(rectLightControls, "leftIntensity", 0, 5, 0.1).name("Left Intensity").onChange(updateRectLights);
+
+lightFolder.addColor(rectLightControls, "rightColor").name("Right Wall Light").onChange(updateRectLights);
+lightFolder.add(rectLightControls, "rightIntensity", 0, 5, 0.1).name("Right Intensity").onChange(updateRectLights);
+
+lightFolder.addColor(rectLightControls, "floorColor").name("Floor Light").onChange(updateRectLights);
+lightFolder.add(rectLightControls, "floorIntensity", 0, 5, 0.1).name("Floor Intensity").onChange(updateRectLights);
+
+lightFolder.addColor(rectLightControls, "ceilingColor").name("Ceiling Light").onChange(updateRectLights);
+lightFolder.add(rectLightControls, "ceilingIntensity", 0, 5, 0.1).name("Ceiling Intensity").onChange(updateRectLights);
+
+
+// Camera Position
 camera.position.set(0, 2, 6);
 
-// 🎞 Animation Loop
+// Animation Loop
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
@@ -335,12 +406,13 @@ function animate() {
 }
 animate();
 
-// 📏 Window Resize Handling
+// Window Resize Handling
 window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
 
 
 
