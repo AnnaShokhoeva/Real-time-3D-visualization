@@ -64,7 +64,7 @@ function createArm(xOffset) {
     return { shoulder, upperArm, lowerArm, wrist };
 }
 
-// Create and attach arms properly
+// Create and attach arms
 const leftArm = createArm(-2);
 const rightArm = createArm(2);
 body.add(leftArm);
@@ -86,7 +86,6 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Start animation
 animate();
 
 // Handle window resize

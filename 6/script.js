@@ -38,7 +38,7 @@ scene.add(walls);
 // Color change of left wall
 const leftWall = walls.children[1];
 
-// GUI Setup (using lil-gui)
+// GUI Setup
 const gui = new lil.GUI();
 const guiControls = {
     color: "#ffffff", // Initial color

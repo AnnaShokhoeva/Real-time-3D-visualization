@@ -18,7 +18,7 @@ const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 }); // Left
 const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 }); // Right wall
 const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff }); // Other walls
 
-// Cornell Box Walls (GUI Controlled)
+// Cornell Box Walls
 const walls = new THREE.Group();
 const wallMaterials = [redMaterial, greenMaterial, whiteMaterial, whiteMaterial, whiteMaterial];
 
@@ -127,7 +127,7 @@ let currentLight = lights.directional;
 // GUI Setup
 const gui = new lil.GUI();
 const lightControls = {
-    type: "Directional", // Default light type
+    type: "Directional", // Default light
     color: "#ffffff",
     intensity: 1,
     positionX: 0,
